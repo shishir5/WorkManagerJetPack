@@ -36,9 +36,10 @@ class JobsDashboardAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     fun setData(newList: List<BaseJobItem>) {
         val diffResult = DiffUtil.calculateDiff(DashboardItemsDiffUtil(mItemsList, newList))
-        diffResult.dispatchUpdatesTo(this)
         mItemsList.clear()
         this.mItemsList.addAll(newList)
+        diffResult.dispatchUpdatesTo(this)
+
     }
 
     override fun getItemViewType(position: Int): Int {

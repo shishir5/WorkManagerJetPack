@@ -37,9 +37,9 @@ class JobsDashboardActivity : AppCompatActivity() {
     }
 
     private fun initClick() {
-        mBinding.fabAddTask.setOnClickListener(View.OnClickListener {
+        mBinding.fabAddTask.setOnClickListener {
             opentCreateTaskList()
-        })
+        }
     }
 
     override fun onResume() {
@@ -72,18 +72,6 @@ class JobsDashboardActivity : AppCompatActivity() {
                 mJobsAdapter.setData(items)
             }
         })
-        val map = mJobsMap.value
-        val items: MutableList<BaseJobItem> = mutableListOf()
-        map?.let { it ->
-            for ((jobName, jobs) in it) {
-                val jobType = getJobType(jobs[0] as DashBoardJobItemVO)
-                addHeaderItem(items, jobName, jobType)
-                for (job in jobs) {
-                    items.add(job as BaseJobItem)
-                }
-            }
-            mJobsAdapter.setData(items)
-        }
     }
 
     private fun getJobType(dashBoardJobItemVO: DashBoardJobItemVO): String {
