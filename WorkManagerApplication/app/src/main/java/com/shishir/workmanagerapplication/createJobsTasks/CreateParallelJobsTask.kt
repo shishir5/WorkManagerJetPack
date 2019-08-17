@@ -7,7 +7,7 @@ import com.shishir.workmanagerapplication.ConstantUtil
 import com.shishir.workmanagerapplication.DummyWorker
 import com.shishir.workmanagerapplication.common.utils.SharedPrefUtil
 
-class CreateChainedJobsTask(
+class CreateParallelJobsTask(
     private val sharedPrefUtil: SharedPrefUtil,
     private val workManager: WorkManager,
     private val jobName: String,
@@ -23,6 +23,7 @@ class CreateChainedJobsTask(
             var i = 1
             var continuation: WorkContinuation? = null
 
+            val jobsList = mutableListOf<OneTimeWorkRequest>()
             while (i <= numberOfJobs) {
                 i++
                 val data = getInputData()
@@ -34,14 +35,9 @@ class CreateChainedJobsTask(
                         .addTag(ConstantUtil.JobTypes.JOB_TYPE_CHANINED)
                         .addTag(jobName)
                         .build()
-
-                if (continuation == null) {
-                    continuation = workManager.beginUniqueWork(jobName, ExistingWorkPolicy.REPLACE, request)
-                } else {
-                    continuation = continuation.then(request)
-                }
+                jobsList.add(request)
             }
-            continuation?.enqueue()
+            workManager.beginUniqueWork(jobName, ExistingWorkPolicy.REPLACE, jobsList).enqueue()
         }
         return null
     }

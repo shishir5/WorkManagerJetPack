@@ -62,7 +62,7 @@ class JobTypesListActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun resetWorkManager() {
         WorkManager.getInstance(this).cancelAllWork()
-        resetJobsListInSharePreference()
+//        resetJobsListInSharePreference()
     }
 
     private fun resetJobsListInSharePreference() {
@@ -74,10 +74,15 @@ class JobTypesListActivity : AppCompatActivity(), View.OnClickListener {
         when (requestCode) {
             CREATE_JOB_REQUEST ->
                 if (resultCode == Activity.RESULT_OK) {
-                    finish()
+                    finishMe()
                 }
         }
 
+    }
+
+    private fun finishMe() {
+        setResult(Activity.RESULT_OK, Intent())
+        finish()
     }
 }
 

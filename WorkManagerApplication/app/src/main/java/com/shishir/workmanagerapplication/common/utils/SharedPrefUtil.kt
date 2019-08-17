@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
 
-class SharedPrefUtil(val context: Context) {
+class SharedPrefUtil(context: Context) {
     companion object {
         val SHARED_PREF_NAME = "SHARED_PREF_DEFAULT"
         var mInstance: SharedPrefUtil? = null
@@ -27,13 +27,14 @@ class SharedPrefUtil(val context: Context) {
     }
 
     fun setJobsList(jobsList: MutableSet<String>) {
-        Log.d("check123 saved", "Job Names List =  " + jobsList.toString())
-        mSharedPref.edit()?.putStringSet(SharedPrefConstants.JOBS_ENQUEUED, jobsList.toSet())?.apply()
+        Log.d("check123 setJobs", "Job Names List =  " + jobsList.toSet().toString())
+        mSharedPref.edit()?.clear()?.putStringSet(SharedPrefConstants.JOBS_ENQUEUED, jobsList.toSet())?.apply()
     }
 
     fun getJobsList(): MutableSet<String> {
-        val abc = mSharedPref.getStringSet(SharedPrefConstants.JOBS_ENQUEUED, mutableSetOf())
-        return abc!!
+        val jobsList = mSharedPref.getStringSet(SharedPrefConstants.JOBS_ENQUEUED, mutableSetOf())
+        Log.d("check123 getJobs", "Job Names List =  " + jobsList.toString())
+        return jobsList!!
     }
 
     fun clearAll() {
