@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimaryDark">#00574B</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="jobEnqueued">#ffbf80</color>
+    <color name="jobFailed">#ff704d</color>
+    <color name="jobCancelled">#b3b3ff</color>
+    <color name="jobSucceeded">#33cc33</color>
+    <color name="jobBlocked">#FFFFFF</color>
+</resources>

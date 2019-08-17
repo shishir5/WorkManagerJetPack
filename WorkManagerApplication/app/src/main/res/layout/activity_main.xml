@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".JobTypesListActivity"
+    android:padding="40dp">
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                  app:layout_constraintTop_toTopOf="parent"
+                  app:layout_constraintLeft_toLeftOf="parent"
+                  app:layout_constraintRight_toRightOf="parent"
+                  android:gravity="center"
+                  android:textStyle="bold"
+                  android:textSize="36sp"
+        android:text="Work Manager"/>
+
+        <Button android:layout_width="match_parent" android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:text="Create Chained Job"
+                android:padding="20dp"
+                android:id="@+id/bt_chained"/>
+
+        <Button android:layout_width="match_parent" android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/bt_chained"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:text="Create Unique Job"
+                android:padding="20dp"
+                android:id="@+id/bt_unique"/>
+
+        <Button android:layout_width="match_parent" android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/bt_unique"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:text="Create Parallel Jobs"
+                android:padding="20dp"
+                android:id="@+id/bt_parallel"/>
+
+        <Button android:layout_width="match_parent" android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:text="Cancel All Tasks"
+                android:padding="20dp"
+                android:id="@+id/bt_reset_all"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
