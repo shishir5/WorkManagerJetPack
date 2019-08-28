@@ -1,6 +1,7 @@
 package com.shishir.workmanagerapplication.dashboard
 
 import android.app.Activity
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -11,11 +12,12 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.WorkInfo
-import com.shishir.workmanagerapplication.common.constants.ConstantUtil
 import com.shishir.workmanagerapplication.JobTypesListActivity
 import com.shishir.workmanagerapplication.R
-import com.shishir.workmanagerapplication.common.utils.WorkManagerUtil
+import com.shishir.workmanagerapplication.common.constants.ConstantUtil
+import com.shishir.workmanagerapplication.common.utils.DialogUtil
 import com.shishir.workmanagerapplication.common.utils.SharedPrefUtil
+import com.shishir.workmanagerapplication.common.utils.WorkManagerUtil
 import com.shishir.workmanagerapplication.dashboard.JobsDashboardActivity.Const.SELECT_JOB_TYPE_REQUEST
 import com.shishir.workmanagerapplication.dashboard.pojo.DashBoardJobItemVO
 import com.shishir.workmanagerapplication.dashboard.pojo.DashboardHeaderItemVO
@@ -72,13 +74,11 @@ class JobsDashboardActivity : AppCompatActivity() {
                 for ((jobName, jobs) in map) {
                     if (jobs.isNotEmpty()) {
                         val jobType = getJobType(jobs[0])
-
                         val header = addHeaderItem(jobName, jobType)
-
                         val jobsList = mutableListOf<DashBoardJobItemVO>()
                         if (jobs.isNotEmpty()) {
                             jobsList.addAll(jobs)
-                            val item = DashboardItemVO(header, jobsList)
+                            val item = DashboardItemVO(jobType, header, jobsList)
                             items.add(item)
                         } else {
                             showEmptyState(true)
@@ -176,13 +176,29 @@ class JobsDashboardActivity : AppCompatActivity() {
 
     private fun initRecyclerView() {
         mJobsAdapter = JobsDashboardAdapter(object : IJobInteractor {
-            override fun stopJob(jobName: String) {
-                stopJobsForJobName(jobName)
-                checkAddedOrRemovedJobs()
+            override fun stopJob(jobType: String, jobName: String) {
+                DialogUtil.showDialog(this@JobsDashboardActivity,
+                    "Cancel Task Options",
+                    "Please choose how you want to cancel the task",
+                    "Cancel By Unique Name",
+                    DialogInterface.OnClickListener { dialog: DialogInterface, which: Int ->
+                        stopUniqueJob(jobName)
+                        checkAddedOrRemovedJobs()
+
+                    },
+                    "Cancel By Key",
+                    DialogInterface.OnClickListener { dialog: DialogInterface, which: Int ->
+                        stopJobsForJobName(jobName)
+                        checkAddedOrRemovedJobs()
+                    })
             }
         })
         mBinding.recyclerJobs.layoutManager = LinearLayoutManager(this, RecyclerView.VERTICAL, false)
         mBinding.recyclerJobs.adapter = mJobsAdapter
+    }
+
+    private fun stopUniqueJob(jobName: String) {
+        WorkManagerUtil.cancelUniqueJob(this, jobName)
     }
 
     private fun stopJobsForJobName(jobName: String) {

@@ -8,15 +8,18 @@ import androidx.work.WorkManager
 class WorkManagerUtil  {
     companion object {
         fun getWorkInfosByTag(jobName: String, context: Context): LiveData<MutableList<WorkInfo>> {
-            val list = WorkManager.getInstance(context).getWorkInfosByTagLiveData(jobName)
-            return list
+            return WorkManager.getInstance(context).getWorkInfosByTagLiveData(jobName)
         }
-        fun getWorkInfodForName(jobName: String, context: Context): LiveData<MutableList<WorkInfo>> {
+        fun getWorkInfoForName(jobName: String, context: Context): LiveData<MutableList<WorkInfo>> {
             return WorkManager.getInstance(context).getWorkInfosForUniqueWorkLiveData(jobName)
         }
 
         fun stopJobWithName(context: Context, jobName: String) {
             WorkManager.getInstance(context).cancelAllWorkByTag(jobName)
+        }
+
+        fun cancelUniqueJob(context: Context, uniqName: String) {
+            WorkManager.getInstance(context).cancelUniqueWork(uniqName)
         }
     }
 
