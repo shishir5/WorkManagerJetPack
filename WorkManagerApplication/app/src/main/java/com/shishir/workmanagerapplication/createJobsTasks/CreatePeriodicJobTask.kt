@@ -1,10 +1,9 @@
 package com.shishir.workmanagerapplication.createJobsTasks
 
 import android.os.AsyncTask
-import android.util.Log
 import androidx.work.*
-import com.shishir.workmanagerapplication.ConstantUtil
-import com.shishir.workmanagerapplication.DummyWorker
+import com.shishir.workmanagerapplication.common.constants.ConstantUtil
+import com.shishir.workmanagerapplication.backgroundJobs.DummyWorker
 import com.shishir.workmanagerapplication.common.utils.SharedPrefUtil
 import java.util.concurrent.TimeUnit
 

@@ -1,4 +1,4 @@
-package com.shishir.workmanagerapplication
+package com.shishir.workmanagerapplication.common.constants
 
 class ConstantUtil {
     class JobTypes {

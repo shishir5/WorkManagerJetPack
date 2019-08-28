@@ -1,7 +1,7 @@
 package com.shishir.workmanagerapplication.common.utils
 
-class SharedPrefConstants {
+class IntentUtil {
     companion object {
-        val JOBS_ENQUEUED = "jobs_enqueued"
+        val JOB_TYPE = "job_type"
     }
 }
