@@ -1,4 +1,4 @@
-package com.shishir.workmanagerapplication
+package com.shishir.workmanagerapplication.common.utils
 
 import android.content.Context
 import androidx.lifecycle.LiveData

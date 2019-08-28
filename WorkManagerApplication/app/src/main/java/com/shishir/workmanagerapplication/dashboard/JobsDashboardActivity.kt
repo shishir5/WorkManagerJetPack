@@ -11,10 +11,10 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.work.WorkInfo
-import com.shishir.workmanagerapplication.ConstantUtil
+import com.shishir.workmanagerapplication.common.constants.ConstantUtil
 import com.shishir.workmanagerapplication.JobTypesListActivity
 import com.shishir.workmanagerapplication.R
-import com.shishir.workmanagerapplication.WorkManagerUtil
+import com.shishir.workmanagerapplication.common.utils.WorkManagerUtil
 import com.shishir.workmanagerapplication.common.utils.SharedPrefUtil
 import com.shishir.workmanagerapplication.dashboard.JobsDashboardActivity.Const.SELECT_JOB_TYPE_REQUEST
 import com.shishir.workmanagerapplication.dashboard.pojo.DashBoardJobItemVO
