@@ -14,6 +14,10 @@ class WorkManagerUtil  {
         fun getWorkInfodForName(jobName: String, context: Context): LiveData<MutableList<WorkInfo>> {
             return WorkManager.getInstance(context).getWorkInfosForUniqueWorkLiveData(jobName)
         }
+
+        fun stopJobWithName(context: Context, jobName: String) {
+            WorkManager.getInstance(context).cancelAllWorkByTag(jobName)
+        }
     }
 
 }
