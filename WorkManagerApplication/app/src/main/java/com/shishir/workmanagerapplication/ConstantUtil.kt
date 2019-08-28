@@ -5,7 +5,8 @@ class ConstantUtil {
         companion object {
             val JOB_TYPE_CHANINED = "CHAINED JOBS"
             val JOB_TYPE_UNIQUE = "UNIQUE JOB"
-            val JOB_TYPE_PARALLEL = "PARRALLEL JOBS"
+            val JOB_TYPE_PARALLEL = "PARALLEL JOBS"
+            val JOB_TYPE_PERIODIC = "PERIODIC JOBS"
             val DEFAULT = "DEFAULT"
         }
     }

@@ -3,8 +3,6 @@ package com.shishir.workmanagerapplication.dashboard
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
@@ -17,8 +15,8 @@ import com.shishir.workmanagerapplication.ConstantUtil
 import com.shishir.workmanagerapplication.JobTypesListActivity
 import com.shishir.workmanagerapplication.R
 import com.shishir.workmanagerapplication.WorkManagerUtil
-import com.shishir.workmanagerapplication.common.pojo.BaseJobItem
 import com.shishir.workmanagerapplication.common.utils.SharedPrefUtil
+import com.shishir.workmanagerapplication.dashboard.JobsDashboardActivity.Const.SELECT_JOB_TYPE_REQUEST
 import com.shishir.workmanagerapplication.dashboard.pojo.DashBoardJobItemVO
 import com.shishir.workmanagerapplication.dashboard.pojo.DashboardHeaderItemVO
 import com.shishir.workmanagerapplication.dashboard.pojo.DashboardItemVO
@@ -27,7 +25,7 @@ import com.shishir.workmanagerapplication.databinding.ActivityDashboardBinding
 class JobsDashboardActivity : AppCompatActivity() {
 
     private object Const {
-         val SELECT_JOB_TYPE_REQUEST = 1000
+        val SELECT_JOB_TYPE_REQUEST = 1000
     }
 
     private lateinit var mBinding: ActivityDashboardBinding
@@ -45,7 +43,7 @@ class JobsDashboardActivity : AppCompatActivity() {
 
     private fun initClick() {
         mBinding.fabAddTask.setOnClickListener {
-            opentCreateTaskList()
+            openCreateTaskList()
         }
     }
 
@@ -58,9 +56,11 @@ class JobsDashboardActivity : AppCompatActivity() {
         val jobNames = getListedJobsFromSharedPreference()
         if (jobNames != mLastJobs)
             fetchWorkInfos(jobNames)
+        else if (jobNames.isEmpty())
+            showEmptyState(true)
     }
 
-    private fun opentCreateTaskList() {
+    private fun openCreateTaskList() {
         val intent = Intent(this, JobTypesListActivity::class.java)
         startActivityForResult(intent, Const.SELECT_JOB_TYPE_REQUEST)
     }
@@ -70,18 +70,25 @@ class JobsDashboardActivity : AppCompatActivity() {
             val items: MutableList<DashboardItemVO> = mutableListOf()
             it?.let { map ->
                 for ((jobName, jobs) in map) {
-                    val jobType = getJobType(jobs[0])
-
-                    val header = addHeaderItem(jobName, jobType)
-
-                    val jobsList = mutableListOf<DashBoardJobItemVO>()
                     if (jobs.isNotEmpty()) {
-                        jobsList.addAll(jobs)
-                        var item = DashboardItemVO(header, jobsList)
-                        items.add(item)
+                        val jobType = getJobType(jobs[0])
+
+                        val header = addHeaderItem(jobName, jobType)
+
+                        val jobsList = mutableListOf<DashBoardJobItemVO>()
+                        if (jobs.isNotEmpty()) {
+                            jobsList.addAll(jobs)
+                            val item = DashboardItemVO(header, jobsList)
+                            items.add(item)
+                        } else {
+                            showEmptyState(true)
+                        }
                     }
                 }
-                mJobsAdapter.setData(items)
+                if (it.size > 0)
+                    mJobsAdapter.setData(items)
+                else
+                    showEmptyState(true)
             }
         })
     }
@@ -92,6 +99,7 @@ class JobsDashboardActivity : AppCompatActivity() {
             keys.contains(ConstantUtil.JobTypes.JOB_TYPE_CHANINED) -> ConstantUtil.JobTypes.JOB_TYPE_CHANINED
             keys.contains(ConstantUtil.JobTypes.JOB_TYPE_UNIQUE) -> ConstantUtil.JobTypes.JOB_TYPE_UNIQUE
             keys.contains(ConstantUtil.JobTypes.JOB_TYPE_PARALLEL) -> ConstantUtil.JobTypes.JOB_TYPE_PARALLEL
+            keys.contains(ConstantUtil.JobTypes.JOB_TYPE_PERIODIC) -> ConstantUtil.JobTypes.JOB_TYPE_PERIODIC
             else -> ConstantUtil.JobTypes.DEFAULT
         }
     }
@@ -116,13 +124,14 @@ class JobsDashboardActivity : AppCompatActivity() {
     }
 
     private fun prepareJobList(JobNamesSet: Set<String>) {
+        showEmptyState(true)
         for (jobName in JobNamesSet) {
             WorkManagerUtil.getWorkInfosByTag(jobName, this).observe(this, Observer { jobsList ->
-                if (jobsList.isNotEmpty())
-                    refreshList(jobName, jobsList)
-                else {
+                if (jobsList.isEmpty())
                     removeJobNameFromStoredList(jobName)
-                }
+                else
+                    showEmptyState(false)
+                refreshList(jobName, jobsList)
             })
         }
     }
@@ -130,7 +139,6 @@ class JobsDashboardActivity : AppCompatActivity() {
     private fun removeJobNameFromStoredList(jobName: String) {
         val jobNames = getListedJobsFromSharedPreference()
         if (jobNames.contains(jobName)) {
-            Log.d("check123 removedJob Name", jobName)
             jobNames.remove(jobName)
             SharedPrefUtil.getInstance(this)?.setJobsList(jobNames)
         }
@@ -138,9 +146,11 @@ class JobsDashboardActivity : AppCompatActivity() {
 
     private fun showEmptyState(enable: Boolean) {
         if (enable) {
+            mBinding.label.visibility = View.GONE
             mBinding.recyclerJobs.visibility = View.GONE
             mBinding.layoutEmptyState.visibility = View.VISIBLE
         } else {
+            mBinding.label.visibility = View.VISIBLE
             mBinding.recyclerJobs.visibility = View.VISIBLE
             mBinding.layoutEmptyState.visibility = View.GONE
         }
@@ -152,8 +162,7 @@ class JobsDashboardActivity : AppCompatActivity() {
             val jobData = DashBoardJobItemVO(job.id.toString(), jobName, job.state.toString(), job.tags.toString())
             jobList.add(jobData)
         }
-        if (jobList.isNotEmpty())
-            refreshMapValue(jobName, jobList)
+        refreshMapValue(jobName, jobList)
     }
 
     private fun refreshMapValue(jobName: String, jobList: MutableList<DashBoardJobItemVO>) {
@@ -167,8 +176,8 @@ class JobsDashboardActivity : AppCompatActivity() {
 
     private fun initRecyclerView() {
         mJobsAdapter = JobsDashboardAdapter(object : IJobInteractor {
-            override fun removeJob(jobName: String) {
-                removeJobNameFromStoredList(jobName)
+            override fun stopJob(jobName: String) {
+                stopJobsForJobName(jobName)
                 checkAddedOrRemovedJobs()
             }
         })
@@ -176,12 +185,18 @@ class JobsDashboardActivity : AppCompatActivity() {
         mBinding.recyclerJobs.adapter = mJobsAdapter
     }
 
+    private fun stopJobsForJobName(jobName: String) {
+        WorkManagerUtil.stopJobWithName(this, jobName)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
-//            SELECT_JOB_TYPE_REQUEST ->
-//                if (resultCode == Activity.RESULT_OK)
-//                    refreshWithDelay()
+            SELECT_JOB_TYPE_REQUEST ->
+                if (resultCode == Activity.RESULT_OK) {
+                    val jobNames = getListedJobsFromSharedPreference()
+                    fetchWorkInfos(jobNames)
+                }
         }
     }
 

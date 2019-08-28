@@ -8,10 +8,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.work.WorkManager
 import com.shishir.workmanagerapplication.common.utils.SharedPrefUtil
-import com.shishir.workmanagerapplication.databinding.ActivityMainBinding
+import com.shishir.workmanagerapplication.databinding.ActivityJobsTypeBinding
 
 class JobTypesListActivity : AppCompatActivity(), View.OnClickListener {
-    lateinit var mBinding: ActivityMainBinding
+    lateinit var mBinding: ActivityJobsTypeBinding
 
     companion object {
         private val CREATE_JOB_REQUEST = 0
@@ -19,7 +19,7 @@ class JobTypesListActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_jobs_type)
         setClickListeners()
     }
 
@@ -27,6 +27,8 @@ class JobTypesListActivity : AppCompatActivity(), View.OnClickListener {
         mBinding.btChained.setOnClickListener(this)
         mBinding.btParallel.setOnClickListener(this)
         mBinding.btUnique.setOnClickListener(this)
+        mBinding.btPeriodic.setOnClickListener(this)
+        mBinding.btPruneWork.setOnClickListener(this)
         mBinding.btResetAll.setOnClickListener(this)
     }
 
@@ -34,13 +36,22 @@ class JobTypesListActivity : AppCompatActivity(), View.OnClickListener {
         when (v.id) {
             R.id.bt_chained,
             R.id.bt_unique,
+            R.id.bt_periodic,
             R.id.bt_parallel -> {
                 openCreateJobsScreen(v.id)
             }
             R.id.bt_reset_all -> {
                 resetWorkManager()
             }
+            R.id.bt_prune_work -> {
+                pruneWork()
+                finishMe()
+            }
         }
+    }
+
+    private fun pruneWork() {
+        WorkManager.getInstance(this).pruneWork()
     }
 
     fun openCreateJobsScreen(id: Int) {
@@ -54,6 +65,9 @@ class JobTypesListActivity : AppCompatActivity(), View.OnClickListener {
             }
             R.id.bt_parallel -> {
                 createJobIntent.putExtra(IntentUtil.JOB_TYPE, ConstantUtil.JobTypes.JOB_TYPE_PARALLEL)
+            }
+            R.id.bt_periodic -> {
+                createJobIntent.putExtra(IntentUtil.JOB_TYPE, ConstantUtil.JobTypes.JOB_TYPE_PERIODIC)
             }
         }
         startActivityForResult(createJobIntent, CREATE_JOB_REQUEST)

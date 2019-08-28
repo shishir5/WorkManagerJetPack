@@ -11,6 +11,7 @@ import androidx.work.WorkManager
 import com.shishir.workmanagerapplication.common.utils.SharedPrefUtil
 import com.shishir.workmanagerapplication.createJobsTasks.CreateChainedJobsTask
 import com.shishir.workmanagerapplication.createJobsTasks.CreateParallelJobsTask
+import com.shishir.workmanagerapplication.createJobsTasks.CreatePeriodicJobTask
 import com.shishir.workmanagerapplication.createJobsTasks.CreateUniqueJobTask
 import com.shishir.workmanagerapplication.databinding.ActivityCreateJobBinding
 
@@ -28,7 +29,7 @@ class CreateJobActivity : AppCompatActivity() {
     }
 
     private fun initView() {
-        if(jobType == ConstantUtil.JobTypes.JOB_TYPE_UNIQUE) {
+        if(jobType == ConstantUtil.JobTypes.JOB_TYPE_UNIQUE || jobType == ConstantUtil.JobTypes.JOB_TYPE_PERIODIC) {
             mBinding.textNumOfJobs.visibility = View.GONE
             mBinding.etNumOfJobs.visibility = View.GONE
         } else {
@@ -88,6 +89,23 @@ class CreateJobActivity : AppCompatActivity() {
                         jobDuration.toInt(),
                         object :
                             CreateUniqueJobTask.ICreateJobListerner {
+                            override fun onJobAdded() {
+                                mBinding.loaderView.visibility = View.GONE
+                                finishMe()
+                            }
+                        })
+                    task.execute()
+                    saveStartedJob(jobName)
+                }
+
+                ConstantUtil.JobTypes.JOB_TYPE_PERIODIC -> {
+                    val task = CreatePeriodicJobTask(
+                        SharedPrefUtil.getInstance(this)!!,
+                        WorkManager.getInstance(this),
+                        jobName,
+                        jobDuration.toInt(),
+                        object :
+                            CreatePeriodicJobTask.ICreateJobListerner {
                             override fun onJobAdded() {
                                 mBinding.loaderView.visibility = View.GONE
                                 finishMe()
