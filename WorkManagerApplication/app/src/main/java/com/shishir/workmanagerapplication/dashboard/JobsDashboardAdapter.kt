@@ -53,7 +53,7 @@ class DashBoardJobsItem(private val mBinding: DashboardItemViewBinding) : Recycl
         itemsList.addAll(taskItem.jobsList)
         refreshAdapter(itemsList)
         mBinding.imageDeleteTask.setOnClickListener { v ->
-            listener.stopJob(taskItem.header.jobName)
+            listener.stopJob(taskItem.jobType, taskItem.header.jobName)
         }
     }
 
@@ -69,5 +69,5 @@ class DashBoardJobsItem(private val mBinding: DashboardItemViewBinding) : Recycl
 }
 
 public interface IJobInteractor {
-    fun stopJob(jobName: String)
+    fun stopJob(jobType: String, jobName: String)
 }

@@ -25,7 +25,7 @@ class CreatePeriodicJobTask(
                 .addTag(ConstantUtil.JobTypes.JOB_TYPE_PERIODIC)
                 .addTag(jobName)
                 .build()
-        workManager.enqueue(request)
+        workManager.enqueueUniquePeriodicWork(jobName, ExistingPeriodicWorkPolicy.REPLACE, request)
         return null
     }
 

@@ -4,4 +4,4 @@ import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
-class DashboardItemVO (val header: DashboardHeaderItemVO, val jobsList: List<DashBoardJobItemVO>): Parcelable
+class DashboardItemVO (val jobType: String, val header: DashboardHeaderItemVO, val jobsList: List<DashBoardJobItemVO>): Parcelable
